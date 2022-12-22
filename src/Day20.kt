@@ -1,7 +1,7 @@
 import kotlin.math.abs
 
 class Node(val number: Long, nodeCount: Int) {
-    var prew: Node = this
+    var prev: Node = this
     var next: Node = this
     val move: Long
 
@@ -16,9 +16,9 @@ class Node(val number: Long, nodeCount: Int) {
     fun addNode(node: Node) {
         val nextNode = this.next
         this.next = node
-        nextNode.prew = node
+        nextNode.prev = node
         node.next = nextNode
-        node.prew = this
+        node.prev = this
     }
 }
 
@@ -29,13 +29,13 @@ fun moveNode(node: Node) {
         return
     }
 
-    var rightNode = node.prew
+    var rightNode = node.prev
 
-    node.prew.next = node.next
-    node.next.prew = node.prew
+    node.prev.next = node.next
+    node.next.prev = node.prev
 
     for (i in 1..steps) {
-        rightNode = if (node.move < 0) rightNode.prew else rightNode.next
+        rightNode = if (node.move < 0) rightNode.prev else rightNode.next
     }
 
     rightNode.addNode(node)
@@ -74,7 +74,7 @@ fun main() {
 
     val testInput = readInput("Day20_test")
     check(solution(input = testInput) == 3L)
-    check(solution(input = testInput, multiplyer = 811589153L, 10) == 1623178306L)
+    check(solution(input = testInput, multiplyer = 811589153L, iterations = 10) == 1623178306L)
 
     val input = readInput("Day20")
     solution(input).println()
