@@ -7,7 +7,7 @@ class CampCleanup : StringAcceptor {
         private set
 
     override fun applyString(input: String): Boolean {
-        val ranges = input.split(",".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+        val ranges = input.split(",").dropLastWhile { it.isEmpty() }.toTypedArray()
         p1 = Pair(ranges[0])
         p2 = Pair(ranges[1])
         isInclude = Pair.include(p1!!, p2!!)
@@ -20,7 +20,7 @@ class CampCleanup : StringAcceptor {
         var end: Int
 
         init {
-            val ranges = s.split("-".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+            val ranges = s.split("-").dropLastWhile { it.isEmpty() }.toTypedArray()
             start = Integer.valueOf(ranges[0])
             end = Integer.valueOf(ranges[1])
         }
