@@ -9,10 +9,10 @@ const val ROOT_NODE_NAME = "root"
 const val HUMN_NODE_NAME = "humn"
 
 class MonkeyOperation(val monkeyName: String, val monkeyLeft: String, val monkeyRight: String, val operation: Char) {
-    fun toOperationNode(prew: MonkeyOperationNode? = null): MonkeyOperationNode {
+    fun toOperationNode(prev: MonkeyOperationNode? = null): MonkeyOperationNode {
         return MonkeyOperationNode(
             name = monkeyName,
-            prew = prew,
+            prev = prev,
             leftName = monkeyLeft,
             rightName = monkeyRight,
             operation = operation
@@ -20,7 +20,7 @@ class MonkeyOperation(val monkeyName: String, val monkeyLeft: String, val monkey
     }
 }
 
-abstract class MonkeyNode(val name: String, var prew: MonkeyNode? = null) {
+abstract class MonkeyNode(val name: String, var prev: MonkeyNode? = null) {
     var left: MonkeyNode? = null
     var right: MonkeyNode? = null
     abstract fun calcResult(): Long
@@ -28,7 +28,7 @@ abstract class MonkeyNode(val name: String, var prew: MonkeyNode? = null) {
     abstract fun rotateFor(rotateNoodeName: String)
 }
 
-class MonkeyNumberNode(name: String, private val number: Long, prew: MonkeyOperationNode) : MonkeyNode(name = name, prew = prew) {
+class MonkeyNumberNode(name: String, private val number: Long, prev: MonkeyOperationNode) : MonkeyNode(name = name, prev = prev) {
     override fun calcResult(): Long {
         return number
     }
@@ -42,8 +42,8 @@ class MonkeyOperationNode(
     var leftName: String?,
     var rightName: String?,
     name: String,
-    prew: MonkeyOperationNode? = null
-) : MonkeyNode(name = name, prew = prew) {
+    prev: MonkeyOperationNode? = null
+) : MonkeyNode(name = name, prev = prev) {
 
     override fun calcResult(): Long {
         return if (left == null && right == null) {
@@ -66,43 +66,43 @@ class MonkeyOperationNode(
     }
 
     override fun rotateFor(rotateNoodeName: String) {
-        val oldPrew = prew
+        val oldPrev = prev
         val rotateNode = if (left?.name == rotateNoodeName) {
             left
         } else if (right?.name == rotateNoodeName) {
             right
         } else throw RuntimeException()
-        prew = rotateNode
+        prev = rotateNode
 
         when (operation) {
-            '+', '*' -> commutativeSwap(oldPrew, rotateNode)
-            '-', '/' -> notCommutativeSwap(oldPrew, rotateNode)
+            '+', '*' -> commutativeSwap(oldPrev, rotateNode)
+            '-', '/' -> notCommutativeSwap(oldPrev, rotateNode)
             else -> throw RuntimeException()
         }
         leftName = left?.name
         rightName = right?.name
-        oldPrew?.rotateFor(name)
+        oldPrev?.rotateFor(name)
     }
 
-    private fun commutativeSwap(oldPrew: MonkeyNode?, rotateNode: MonkeyNode?) {
+    private fun commutativeSwap(oldPrev: MonkeyNode?, rotateNode: MonkeyNode?) {
         operation = when (operation) {
             '*' -> '/'
             '+' -> '-'
             else -> throw RuntimeException()
         }
         val newRight = if (left === rotateNode) right else left
-        left = oldPrew
+        left = oldPrev
         right = newRight
     }
 
-    private fun notCommutativeSwap(oldPrew: MonkeyNode?, rotateNode: MonkeyNode?) {
+    private fun notCommutativeSwap(oldPrev: MonkeyNode?, rotateNode: MonkeyNode?) {
         operation = when (operation) {
             '-' -> if (left === rotateNode) '+' else '-'
             '/' -> if (left === rotateNode) '*' else '/'
             else -> throw RuntimeException()
         }
-        val newLeft = if (left === rotateNode) oldPrew else left
-        val newRight = if (right === rotateNode) oldPrew else right
+        val newLeft = if (left === rotateNode) oldPrev else left
+        val newRight = if (right === rotateNode) oldPrev else right
         left = newLeft
         right = newRight
     }
@@ -174,7 +174,7 @@ open class MonkeyTree(input: List<String>) {
     private fun createMonkeyNumberForNode(node: MonkeyOperationNode, numberNodeName: String): MonkeyNumberNode {
         return MonkeyNumberNode(
             name = numberNodeName,
-            prew = node,
+            prev = node,
             number = numberMonkeys[numberNodeName]!!
         )
     }

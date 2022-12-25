@@ -8,6 +8,9 @@ import java.security.MessageDigest
 fun readInput(name: String) = File("src", "$name.txt")
     .readLines()
 
+fun readInputAsText(name: String) = File("src", "$name.txt")
+    .readText()
+
 /**
  * Converts string to md5 hash.
  */
@@ -41,6 +44,8 @@ fun <T> transform(input: List<String>, acceptorCreator: () -> T): List<T>
 
     return out
 }
+
+class Point(val x: Int, val y: Int)
 
 interface StringAcceptor {
     fun applyString(input: String): Boolean
